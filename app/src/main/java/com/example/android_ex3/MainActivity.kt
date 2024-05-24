@@ -11,5 +11,33 @@ import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : AppCompatActivity() {
 
-}
+    private lateinit var viewModel: NetworkViewModel
+    private lateinit var textViewStatus: TextView
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // ایجاد رابط کاربری به صورت برنامه‌نویسی
+        val layout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(16, 16, 16, 16)
+        }
+
+        textViewStatus = TextView(this).apply {
+            text = "Checking network status..."
+            textSize = 18f
+        }
+
+        layout.addView(textViewStatus)
+        setContentView(layout)
+
+        viewModel = ViewModelProvider(this).get(NetworkViewModel::class.java)
+        viewModel.networkStatus.observe(this, Observer { status ->
+            textViewStatus.text = status
+        })
+
+        Intent(this, NetworkMonitoringService::class.java).also { intent ->
+            startService(intent)
+        }
+    }
+}
