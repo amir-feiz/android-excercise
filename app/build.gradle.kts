@@ -43,8 +43,10 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.androidx.lifecycle.livedata.core.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
 
 }
