@@ -30,10 +30,16 @@
         </activity>
 
         <service
+<<<<<<< code-1
+            android:name="com.example.networkmonitor.NetworkMonitoringService"
+            android:enabled="true"
+            android:exported="true"/>
+=======
             android:name="androidx.work.impl.background.systemjob.SystemJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="true"/>
 
+>>>>>>> main
     </application>
 
 </manifest>

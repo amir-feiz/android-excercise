@@ -12,14 +12,42 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.android_ex3.CheckStatusWorker
-import com.example.android_ex3.R
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var viewModel: NetworkViewModel
+    private lateinit var textViewStatus: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Create the UI programmatically
+        val layout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(16, 16, 16, 16)
+        }
+
+        textViewStatus = TextView(this).apply {
+            text = "Checking network status..."
+            textSize = 18f
+        }
+
+        layout.addView(textViewStatus)
+        setContentView(layout)
+
+        // Initialize ViewModel and observe network status
+        viewModel = ViewModelProvider(this).get(NetworkViewModel::class.java)
+        viewModel.networkStatus.observe(this, Observer { status ->
+            textViewStatus.text = status
+        })
+
+        // Start NetworkMonitoringService
+        Intent(this, NetworkMonitoringService::class.java).also { intent ->
+            startService(intent)
+        }
+
+        // Schedule periodic work request
         val checkStatusWork = PeriodicWorkRequestBuilder<CheckStatusWorker>(2, TimeUnit.MINUTES)
             .build()
 
