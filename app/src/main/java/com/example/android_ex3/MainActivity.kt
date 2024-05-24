@@ -1,4 +1,3 @@
-// MainActivity.kt
 package com.example.networkmonitor
 
 import android.content.Intent
@@ -12,12 +11,14 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.android_ex3.CheckStatusWorker
+import com.example.android_ex3.readLogsFromFile
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: NetworkViewModel
     private lateinit var textViewStatus: TextView
+    private lateinit var logTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,10 +35,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         layout.addView(textViewStatus)
+
+        logTextView = TextView(this).apply {
+            text = "Logs:\n"
+            textSize = 16f
+        }
+
+        layout.addView(logTextView)
+
         setContentView(layout)
 
         // Initialize ViewModel and observe network status
-        viewModel = ViewModelProvider(this).get(NetworkViewModel::class.java)
+        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)).get(NetworkViewModel::class.java)
         viewModel.networkStatus.observe(this, Observer { status ->
             textViewStatus.text = status
         })
@@ -56,5 +65,14 @@ class MainActivity : AppCompatActivity() {
             ExistingPeriodicWorkPolicy.KEEP,
             checkStatusWork
         )
+
+        // Display logs
+        displayLogs()
+    }
+
+    private fun displayLogs() {
+        val logs = readLogsFromFile(this)
+        val formattedLogs = logs.joinToString("\n")
+        logTextView.text = "Logs:\n$formattedLogs"
     }
 }
